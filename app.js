@@ -47,11 +47,15 @@ function itempush(goal) {
     });
 }
 
+function test() {
+    console.log('test');
+}
+
 var app = express();
 
 app.get('/index.html', (req, res) => {
     res.send('hello');
-    open_door();
+    test();
 });
 
 app.get('/opendoor', (req, res) => {
