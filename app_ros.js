@@ -7,62 +7,62 @@ var dotenv = require('dotenv');
 // var sequelize = require('sequelize');
 let deliveryService = require('./services/deliveryService');
 
-// const rosnodejs = require('rosnodejs');
+const rosnodejs = require('rosnodejs');
 
-// rosnodejs.initNode('/hongdo_ros_web_node');
-// const nh = rosnodejs.nh;
+rosnodejs.initNode('/hongdo_ros_web_node');
+const nh = rosnodejs.nh;
 
-// function opnecv_capture() {
-//     const client = nh.serviceClient('/capture', 'std_srvs/Trigger');
-//     client.call();
-// }
+function opnecv_capture() {
+    const client = nh.serviceClient('/capture', 'std_srvs/Trigger');
+    client.call();
+}
 
-// function self_door_open() {
-//     //문 열어주세요. 성공적으로 열면 true 반환, 3초뒤에 item push해주세요
-//     const client = nh.serviceClient('/opendoor2', 'std_srvs/Trigger');
-//     client.call((resp) => {
-//         console.log('Self door open Service response ' + JSON.stringify(resp));
-//     });
-// }
-// function itempush(goal) {
-//     //open에서 finish 받으면 실행 끝나면 true 반환, 5초 뒤에 self_door_close해주세요
-//     const client = nh.serviceClient('/exection', 'std_srvs/Trigger');
-//     client.call((resp) => {
-//         console.log('itempush Service response ' + JSON.stringify(resp));
-//     });
-// }
-// function self_door_close() {
-//     //문 닫아주세요. 성공적으로 열면 true 반환
-//     const client = nh.serviceClient('/closedoor2', 'std_srvs/Trigger');
-//     client.call((resp) => {
-//         console.log('self door close Service response ' + JSON.stringify(resp));
-//     });
-// }
-// function human_door_open() {
-//     //문 열어주세요. 성공적으로 열면 true 반환,
-//     const client = nh.serviceClient('/opendoor1', 'std_srvs/Trigger');
-//     client.call((resp) => {
-//         console.log('Human door open Service response ' + JSON.stringify(resp));
-//     });
-// }
+function self_door_open() {
+    //문 열어주세요. 성공적으로 열면 true 반환, 3초뒤에 item push해주세요
+    const client = nh.serviceClient('/opendoor2', 'std_srvs/Trigger');
+    client.call((resp) => {
+        console.log('Self door open Service response ' + JSON.stringify(resp));
+    });
+}
+function itempush(goal) {
+    //open에서 finish 받으면 실행 끝나면 true 반환, 5초 뒤에 self_door_close해주세요
+    const client = nh.serviceClient('/exection', 'std_srvs/Trigger');
+    client.call((resp) => {
+        console.log('itempush Service response ' + JSON.stringify(resp));
+    });
+}
+function self_door_close() {
+    //문 닫아주세요. 성공적으로 열면 true 반환
+    const client = nh.serviceClient('/closedoor2', 'std_srvs/Trigger');
+    client.call((resp) => {
+        console.log('self door close Service response ' + JSON.stringify(resp));
+    });
+}
+function human_door_open() {
+    //문 열어주세요. 성공적으로 열면 true 반환,
+    const client = nh.serviceClient('/opendoor1', 'std_srvs/Trigger');
+    client.call((resp) => {
+        console.log('Human door open Service response ' + JSON.stringify(resp));
+    });
+}
 
-// function human_door_close() {
-//     //문 닫아주세요. 성공적으로 열면 true 반환,
-//     const client = nh.serviceClient('/closedoor1', 'std_srvs/Trigger');
-//     client.call((resp) => {
-//         console.log(
-//             'human door close Service response ' + JSON.stringify(resp)
-//         );
-//     });
-// }
+function human_door_close() {
+    //문 닫아주세요. 성공적으로 열면 true 반환,
+    const client = nh.serviceClient('/closedoor1', 'std_srvs/Trigger');
+    client.call((resp) => {
+        console.log(
+            'human door close Service response ' + JSON.stringify(resp)
+        );
+    });
+}
 
-// function destination(goal) {
-//     //목적지 start 처음, middle 중간, final 끝
-//     const client = nh.serviceClient('/closedoor', 'std_srvs/Trigger');
-//     client.call({ dest: goal }, (resp) => {
-//         console.log('Destination Service response ' + JSON.stringify(resp));
-//     });
-// }
+function destination(goal) {
+    //목적지 start 처음, middle 중간, final 끝
+    const client = nh.serviceClient('/closedoor', 'std_srvs/Trigger');
+    client.call({ dest: goal }, (resp) => {
+        console.log('Destination Service response ' + JSON.stringify(resp));
+    });
+}
 
 async function middleStart() {
     human_door_open();
@@ -148,7 +148,7 @@ app.get('/start', async function (req, res) {
 
 let open = false;
 app.get('/open', async function (req, res) {
-    console.log('뭔소리고');
+    console.log('try open');
     try {
         console.log('open', open);
         console.log(currentDelivery);
@@ -176,9 +176,9 @@ app.get('/open', async function (req, res) {
     }
 });
 
-setInterval(async function () {
-    // currentDelivery = await deliveryService.findDelivery();
-    // currentId = currentDelivery[0].id;
-}, 1000);
+// setInterval(async function () {
+//     // currentDelivery = await deliveryService.findDelivery();
+//     // currentId = currentDelivery[0].id;
+// }, 1000);
 
 module.exports = app;

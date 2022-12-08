@@ -67,4 +67,19 @@ module.exports = {
                 return false;
             });
     },
+    finish: async function (id) {
+        delivery
+            .update(
+                {
+                    status: '배송 완료',
+                },
+                { where: { id: id } }
+            )
+            .then(() => {
+                return true;
+            })
+            .catch((err) => {
+                return false;
+            });
+    },
 };
