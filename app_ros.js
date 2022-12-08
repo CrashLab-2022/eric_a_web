@@ -177,7 +177,9 @@ app.get('/open', async function (req, res) {
 });
 
 app.get('/itempush', async function (req, res) {
-    itempush();
+    let result = itempush();
+    console.log(result);
+    res.send(result);
 });
 
 app.get('/humandoorclose', async function (req, res) {
@@ -202,7 +204,17 @@ app.get('/test', async function (req, res) {
         if (human_door_close()) {
             console.log('human_door_close');
         }
+    }, 1000 * 45);
+});
+
+app.get('/selftest', async function (req, res) {
+    self_door_open();
+    setTimeout(function () {
+        itempush();
     }, 1000 * 20);
+    setTimeout(function () {
+        self_door_close();
+    }, 1000 * 25);
 });
 
 // setInterval(async function () {
