@@ -176,12 +176,24 @@ app.get('/open', async function (req, res) {
     }
 });
 
-app.get('/push', async function (req, res) {
+app.get('/itempush', async function (req, res) {
     itempush();
 });
 
 app.get('/humandoorclose', async function (req, res) {
     human_door_close();
+});
+
+app.get('/selfdooropen', async function (req, res) {
+    self_door_open();
+});
+
+app.get('/humandooropen', async function (req, res) {
+    human_door_open();
+});
+
+app.get('/selfdoorclose', async function (req, res) {
+    self_door_close();
 });
 
 // setInterval(async function () {
