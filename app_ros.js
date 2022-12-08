@@ -24,7 +24,7 @@ function self_door_open() {
         console.log('Self door open Service response ' + JSON.stringify(resp));
     });
 }
-function itempush(goal) {
+function itempush() {
     //open에서 finish 받으면 실행 끝나면 true 반환, 5초 뒤에 self_door_close해주세요
     const client = nh.serviceClient('/exection', 'std_srvs/Trigger');
     client.call((resp) => {
@@ -174,6 +174,10 @@ app.get('/open', async function (req, res) {
     } catch (err) {
         console.log(err);
     }
+});
+
+app.get('/push', async function (req, res) {
+    itempush();
 });
 
 // setInterval(async function () {
