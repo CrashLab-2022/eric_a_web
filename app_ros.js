@@ -73,7 +73,7 @@ async function middleStart() {
     destination(currentDelivery[0].destination);
 }
 
-let timeOut = true
+let timeOut = true;
 // 도착 신호 받으면 실행되는 함수
 
 async function customerStart() {
@@ -82,22 +82,22 @@ async function customerStart() {
         setTimeout(function () {
             if (timeout) {
                 if (self_door_open()) {
-            console.log('self door open');
-            setTimeout(function () {
-                if (itempush()) {
-                    console.log('item push');
+                    console.log('self door open');
+                    setTimeout(function () {
+                        if (itempush()) {
+                            console.log('item push');
+                        }
+                    }, 1000 * 20);
+                    setTimeout(function () {
+                        if (self_door_close()) {
+                            console.log('self door close');
+                        }
+                    }, 1000 * 20);
                 }
-            }, 1000 * 20);
-            setTimeout(function () {
-                if (self_door_close()) {
-                    console.log('self door close');
-                }
-            }, 1000 * 20);
-        }
-        await deliveryService.finish(currentId);
-        destination(final);
+                deliveryService.finish(currentId);
+                destination(final);
             }
-        })
+        });
     } else {
         if (self_door_open()) {
             console.log('self door open');
@@ -132,7 +132,7 @@ app.get('/index.html', (req, res) => {
 
 app.get('/start', async function (req, res) {
     try {
-        currentDelivery = await deliveryService.findDelivery();
+        currentDelivery = deliveryService.findDelivery();
         currentId = currentDelivery[0].id;
         console.log('start');
         destination('start');
