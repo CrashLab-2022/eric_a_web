@@ -180,6 +180,10 @@ app.get('/push', async function (req, res) {
     itempush();
 });
 
+app.get('/humandoorclose', async function (req, res) {
+    human_door_close();
+});
+
 // setInterval(async function () {
 //     // currentDelivery = await deliveryService.findDelivery();
 //     // currentId = currentDelivery[0].id;
