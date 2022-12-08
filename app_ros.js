@@ -178,8 +178,9 @@ app.get('/open', async function (req, res) {
 
 app.get('/itempush', async function (req, res) {
     let result = itempush();
-    console.log(result);
-    res.send(result);
+    console.log(req);
+    console.log(res);
+    res.send(200);
 });
 
 app.get('/humandoorclose', async function (req, res) {
