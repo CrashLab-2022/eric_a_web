@@ -19,7 +19,7 @@ function opnecv_capture() {
 
 function self_door_open() {
     //문 열어주세요. 성공적으로 열면 true 반환, 3초뒤에 item push해주세요
-    const client = nh.serviceClient('/opendoor2', 'std_srvs/Trigger');
+    const client = nh.serviceClient('/opendoor_2', 'std_srvs/Trigger');
     client.call((resp) => {
         console.log('Self door open Service response ' + JSON.stringify(resp));
     });
@@ -33,14 +33,14 @@ function itempush() {
 }
 function self_door_close() {
     //문 닫아주세요. 성공적으로 열면 true 반환
-    const client = nh.serviceClient('/closedoor2', 'std_srvs/Trigger');
+    const client = nh.serviceClient('/closedoor_2', 'std_srvs/Trigger');
     client.call((resp) => {
         console.log('self door close Service response ' + JSON.stringify(resp));
     });
 }
 function human_door_open() {
     //문 열어주세요. 성공적으로 열면 true 반환,
-    const client = nh.serviceClient('/opendoor1', 'std_srvs/Trigger');
+    const client = nh.serviceClient('/opendoor_1', 'std_srvs/Trigger');
     client.call((resp) => {
         console.log('Human door open Service response ' + JSON.stringify(resp));
     });
@@ -48,7 +48,7 @@ function human_door_open() {
 
 function human_door_close() {
     //문 닫아주세요. 성공적으로 열면 true 반환,
-    const client = nh.serviceClient('/closedoor1', 'std_srvs/Trigger');
+    const client = nh.serviceClient('/closedoor_1', 'std_srvs/Trigger');
     client.call((resp) => {
         console.log(
             'human door close Service response ' + JSON.stringify(resp)
