@@ -8,7 +8,6 @@ var dotenv = require('dotenv');
 let deliveryService = require('./services/deliveryService');
 
 const rosnodejs = require('rosnodejs');
-
 rosnodejs.initNode('/hongdo_ros_web_node');
 const nh = rosnodejs.nh;
 
@@ -16,6 +15,23 @@ function opnecv_capture() {
     const client = nh.serviceClient('/capture', 'std_srvs/Trigger');
     client.call();
 }
+
+const middle_arrive = nh.advertiseService('/middle_arrive', 'std_srvs/Trigger', (req, res) => {
+    console.log("middle_arrive");
+    destination_final();
+    return true;
+});
+
+const final_arrive = nh.advertiseService('/final_arrive', 'std_srvs/Trigger', (req, res) => {
+    console.log("final_arrive");
+    destination_start();
+    return true;
+});
+
+const start_arrive = nh.advertiseService('/start_arrive', 'std_srvs/Trigger', (req, res) => {
+    console.log("start_arrive");
+    return true;
+});
 
 function self_door_open() {
     //문 열어주세요. 성공적으로 열면 true 반환, 3초뒤에 item push해주세요
@@ -56,10 +72,29 @@ function human_door_close() {
     });
 }
 
-function destination(goal) {
-    //목적지 start 처음, middle 중간, final 끝
-    const client = nh.serviceClient('/closedoor', 'std_srvs/Trigger');
-    client.call({ dest: goal }, (resp) => {
+function destination_middle() {
+    //목적지 start 처음, middle 경유지, final 끝
+    // 경유지 출발
+    const client = nh.serviceClient('/middle', 'std_srvs/Trigger');
+    client.call((resp) => {
+        console.log('Destination Service response ' + JSON.stringify(resp));
+    });
+}
+
+function destination_final() {
+    //목적지 start 처음, middle 경유지, final 끝
+    // 도착지 출발
+    const client = nh.serviceClient('/final', 'std_srvs/Trigger');
+    client.call((resp) => {
+        console.log('Destination Service response ' + JSON.stringify(resp));
+    });
+}
+
+function destination_start() {
+    //목적지 start 처음, middle 경유지, final 끝
+    // 출발지 출발
+    const client = nh.serviceClient('/start', 'std_srvs/Trigger');
+    client.call((resp) => {
         console.log('Destination Service response ' + JSON.stringify(resp));
     });
 }
