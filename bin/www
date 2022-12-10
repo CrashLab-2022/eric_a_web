@@ -4,7 +4,7 @@
  * Module dependencies.
  */
 
-var app = require('../app');
+var app = require('../app_ros');
 var debug = require('debug')('eric-a:server');
 var http = require('http');
 

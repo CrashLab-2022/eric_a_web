@@ -7,62 +7,26 @@ var dotenv = require('dotenv');
 // var sequelize = require('sequelize');
 let deliveryService = require('./services/deliveryService');
 
-// const rosnodejs = require('rosnodejs');
+function self_door_open() {
+    console.log('func: self_door_open');
+}
+function itempush(goal) {
+    console.log('func: itempush');
+}
+function self_door_close() {
+    console.log('func: self_door_close');
+}
+function human_door_open() {
+    console.log('func: human_door_open');
+}
 
-// rosnodejs.initNode('/hongdo_ros_web_node');
-// const nh = rosnodejs.nh;
+function human_door_close() {
+    console.log('func: human_door_close');
+}
 
-// function opnecv_capture() {
-//     const client = nh.serviceClient('/capture', 'std_srvs/Trigger');
-//     client.call();
-// }
-
-// function self_door_open() {
-//     //문 열어주세요. 성공적으로 열면 true 반환, 3초뒤에 item push해주세요
-//     const client = nh.serviceClient('/opendoor2', 'std_srvs/Trigger');
-//     client.call((resp) => {
-//         console.log('Self door open Service response ' + JSON.stringify(resp));
-//     });
-// }
-// function itempush(goal) {
-//     //open에서 finish 받으면 실행 끝나면 true 반환, 5초 뒤에 self_door_close해주세요
-//     const client = nh.serviceClient('/exection', 'std_srvs/Trigger');
-//     client.call((resp) => {
-//         console.log('itempush Service response ' + JSON.stringify(resp));
-//     });
-// }
-// function self_door_close() {
-//     //문 닫아주세요. 성공적으로 열면 true 반환
-//     const client = nh.serviceClient('/closedoor2', 'std_srvs/Trigger');
-//     client.call((resp) => {
-//         console.log('self door close Service response ' + JSON.stringify(resp));
-//     });
-// }
-// function human_door_open() {
-//     //문 열어주세요. 성공적으로 열면 true 반환,
-//     const client = nh.serviceClient('/opendoor1', 'std_srvs/Trigger');
-//     client.call((resp) => {
-//         console.log('Human door open Service response ' + JSON.stringify(resp));
-//     });
-// }
-
-// function human_door_close() {
-//     //문 닫아주세요. 성공적으로 열면 true 반환,
-//     const client = nh.serviceClient('/closedoor1', 'std_srvs/Trigger');
-//     client.call((resp) => {
-//         console.log(
-//             'human door close Service response ' + JSON.stringify(resp)
-//         );
-//     });
-// }
-
-// function destination(goal) {
-//     //목적지 start 처음, middle 중간, final 끝
-//     const client = nh.serviceClient('/closedoor', 'std_srvs/Trigger');
-//     client.call({ dest: goal }, (resp) => {
-//         console.log('Destination Service response ' + JSON.stringify(resp));
-//     });
-// }
+function destination(goal) {
+    console.log('func: destination', goal);
+}
 
 async function middleStart() {
     human_door_open();
@@ -73,7 +37,7 @@ async function middleStart() {
     destination(currentDelivery[0].destination);
 }
 
-let timeOut = true
+let timeOut = true;
 // 도착 신호 받으면 실행되는 함수
 
 async function customerStart() {
@@ -82,22 +46,22 @@ async function customerStart() {
         setTimeout(function () {
             if (timeout) {
                 if (self_door_open()) {
-            console.log('self door open');
-            setTimeout(function () {
-                if (itempush()) {
-                    console.log('item push');
+                    console.log('self door open');
+                    setTimeout(function () {
+                        if (itempush()) {
+                            console.log('item push');
+                        }
+                    }, 1000 * 20);
+                    setTimeout(function () {
+                        if (self_door_close()) {
+                            console.log('self door close');
+                        }
+                    }, 1000 * 20);
                 }
-            }, 1000 * 20);
-            setTimeout(function () {
-                if (self_door_close()) {
-                    console.log('self door close');
-                }
-            }, 1000 * 20);
-        }
-        await deliveryService.finish(currentId);
-        destination(final);
+                deliveryService.finish(currentId);
+                destination('final');
             }
-        })
+        });
     } else {
         if (self_door_open()) {
             console.log('self door open');
@@ -112,10 +76,36 @@ async function customerStart() {
                 }
             }, 1000 * 20);
         }
-        await deliveryService.finish(currentId);
-        destination(final);
+        deliveryService.finish(currentId);
+        destination('final');
     }
 }
+
+// let middleArrive = rosNode.advertiseService(
+//     '/middle_arrive',
+//     SetBool,
+//     (req, resp) => {
+//         rosnodejs.log.info('Handling request! ' + JSON.stringify(req));
+//         resp.success = !req.data;
+//         resp.message = 'Inverted!';
+//         middleStart();
+//         return true;
+//     }
+// );
+
+// const whitelist = [
+//     'http://localhost:3000',
+//     'https://eric-a.netlify.app',
+//     'http://dev.bbbae.shop',
+// ];
+// const corsOptions = {
+//     origin: function (origin, callback) {
+//         if (whitelist.indexOf(origin) !== -1) {
+//             callback(null, true);
+//         }
+//     },
+//     credentials: true,
+// };
 
 function test() {
     console.log('This is test!');
