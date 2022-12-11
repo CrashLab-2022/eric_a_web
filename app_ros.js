@@ -122,7 +122,9 @@ async function middleStart() {
         human_door_close();
     }, 1000 * 20); // 20초 후 닫힘
     await deliveryService.startCustomer(currentId);
-    destination_final();
+    setTimeout(function () {
+        destination_final();
+    }, 1000 * 40);
 }
 
 let timeOut = true;
