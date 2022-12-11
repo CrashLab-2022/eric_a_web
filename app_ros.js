@@ -10,6 +10,7 @@ var dotenv = require('dotenv');
 let deliveryService = require('./services/deliveryService');
 
 const rosnodejs = require('rosnodejs');
+const { CommState } = require('rosnodejs/dist/actions/ClientStates');
 rosnodejs.initNode('/eric_a_ros_web_node');
 const nh = rosnodejs.nh;
 
@@ -136,11 +137,11 @@ async function customerStart() {
                 setTimeout(function () {
                     itempush();
                 }, 1000 * 20);
-                
+
                 setTimeout(function () {
                     self_door_close();
                 }, 1000 * 40);
-                
+
                 setTimeout(function () {
                     deliveryService.finish(currentId);
                     destination_start();
@@ -203,8 +204,8 @@ app.get('/open', async function (req, res) {
             timeOut = false;
             human_door_open();
             setTimeout(function () {
-                human_door_close()
-            }, 1000 * 20)
+                human_door_close();
+            }, 1000 * 20);
             setTimeout(async function () {
                 await deliveryService.finish(currentId);
                 destination_start();
@@ -258,6 +259,11 @@ app.get('/selftest', async function (req, res) {
     setTimeout(function () {
         self_door_close();
     }, 1000 * 25);
+});
+
+app.get('/test', async function (req, res) {
+    console.log('test');
+    res.send('test');
 });
 
 // setInterval(async function () {
