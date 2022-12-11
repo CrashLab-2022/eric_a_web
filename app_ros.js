@@ -18,22 +18,36 @@ function opnecv_capture() {
     client.call();
 }
 
-const middle_arrive = nh.advertiseService('/middle_arrive', 'std_srvs/Trigger', (req, res) => {
-    console.log("middle_arrive");
-    destination_final();
-    return true;
-});
+// 경유지에 도착함
+const middle_arrive = nh.advertiseService(
+    '/middle_arrive',
+    'std_srvs/Trigger',
+    (req, res) => {
+        console.log('middle_arrive');
+        middleStart();
+        return true;
+    }
+);
 
-const final_arrive = nh.advertiseService('/final_arrive', 'std_srvs/Trigger', (req, res) => {
-    console.log("final_arrive");
-    destination_start();
-    return true;
-});
+// 배송지에 도착함
+const final_arrive = nh.advertiseService(
+    '/final_arrive',
+    'std_srvs/Trigger',
+    (req, res) => {
+        console.log('final_arrive');
+        customerStart();
+        return true;
+    }
+);
 
-const start_arrive = nh.advertiseService('/start_arrive', 'std_srvs/Trigger', (req, res) => {
-    console.log("start_arrive");
-    return true;
-});
+const start_arrive = nh.advertiseService(
+    '/start_arrive',
+    'std_srvs/Trigger',
+    (req, res) => {
+        console.log('start_arrive');
+        return true;
+    }
+);
 
 function self_door_open() {
     //문 열어주세요. 성공적으로 열면 true 반환, 3초뒤에 item push해주세요
@@ -105,9 +119,9 @@ async function middleStart() {
     human_door_open();
     setTimeout(function () {
         human_door_close();
-    }, 5000); // 5초 후 닫힘
+    }, 1000 * 20); // 20초 후 닫힘
     await deliveryService.startCustomer(currentId);
-    destination(currentDelivery[0].destination);
+    destination_final();
 }
 
 let timeOut = true;
@@ -118,39 +132,33 @@ async function customerStart() {
     if (currentDelivery[0].isInPerson == '직접 수령하기') {
         setTimeout(function () {
             if (timeout) {
-                if (self_door_open()) {
-                    console.log('self door open');
-                    setTimeout(function () {
-                        if (itempush()) {
-                            console.log('item push');
-                        }
-                    }, 1000 * 20);
-                    setTimeout(function () {
-                        if (self_door_close()) {
-                            console.log('self door close');
-                        }
-                    }, 1000 * 20);
-                }
-                deliveryService.finish(currentId);
-                destination(final);
+                self_door_open();
+                setTimeout(function () {
+                    itempush();
+                }, 1000 * 20);
+                
+                setTimeout(function () {
+                    self_door_close();
+                }, 1000 * 40);
+                
+                setTimeout(function () {
+                    await deliveryService.finish(currentId);
+                    destination_start();
+                }, 1000 * 60);
             }
         });
     } else {
-        if (self_door_open()) {
-            console.log('self door open');
-            setTimeout(function () {
-                if (itempush()) {
-                    console.log('item push');
-                }
-            }, 1000 * 20);
-            setTimeout(function () {
-                if (self_door_close()) {
-                    console.log('self door close');
-                }
-            }, 1000 * 20);
-        }
-        await deliveryService.finish(currentId);
-        destination(final);
+        self_door_open();
+        setTimeout(function () {
+            itempush();
+        }, 1000 * 20);
+        setTimeout(function () {
+            self_door_close();
+        }, 1000 * 40);
+        setTimeout(function () {
+            await deliveryService.finish(currentId);
+            destination_start();
+        }, 1000 * 60);
     }
 }
 
@@ -172,10 +180,9 @@ app.get('/start', async function (req, res) {
         currentDelivery = deliveryService.findDelivery();
         currentId = currentDelivery[0].id;
         console.log('start');
-        destination('start');
+        destination_middle();
         deliveryService.startDelivery(currentId);
         console.log(currentDelivery);
-        console.log('김채원바보');
         res.send('start success');
     } catch (err) {
         console.log(err);
@@ -194,15 +201,12 @@ app.get('/open', async function (req, res) {
             res.send('open start');
             timeOut = false;
             human_door_open();
-            console.log('human_door_open');
             setTimeout(function () {
-                if (human_door_close()) {
-                    console.log('human_door_close');
-                }
-            }, 1000 * 20);
+                human_door_close()
+            }, 1000 * 20)
             setTimeout(async function () {
                 await deliveryService.finish(currentId);
-                destination('final');
+                destination_start();
                 open = false;
             }, 1000 * 40);
         } else {
