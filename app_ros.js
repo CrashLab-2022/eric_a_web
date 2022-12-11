@@ -179,7 +179,8 @@ app.get('/index.html', (req, res) => {
 app.get('/start', async function (req, res) {
     try {
         timeOut = true;
-        currentDelivery = deliveryService.findDelivery();
+        currentDelivery = await deliveryService.findDelivery();
+        console.log(currentDelivery);
         currentId = currentDelivery[0].id;
         console.log('start');
         destination_middle();
