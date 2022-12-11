@@ -146,7 +146,7 @@ async function customerStart() {
                     destination_start();
                 }, 1000 * 60);
             }
-        });
+        }, 1000 * 60 * 3);
     } else {
         self_door_open();
         setTimeout(function () {
