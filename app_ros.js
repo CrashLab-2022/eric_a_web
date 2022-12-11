@@ -242,15 +242,6 @@ app.get('/selfdoorclose', async function (req, res) {
     self_door_close();
 });
 
-app.get('/test', async function (req, res) {
-    human_door_open();
-    setTimeout(function () {
-        if (human_door_close()) {
-            console.log('human_door_close');
-        }
-    }, 1000 * 45);
-});
-
 app.get('/selftest', async function (req, res) {
     self_door_open();
     setTimeout(function () {
