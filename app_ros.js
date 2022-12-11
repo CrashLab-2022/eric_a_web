@@ -142,7 +142,7 @@ async function customerStart() {
                 }, 1000 * 40);
                 
                 setTimeout(function () {
-                    await deliveryService.finish(currentId);
+                    deliveryService.finish(currentId);
                     destination_start();
                 }, 1000 * 60);
             }
@@ -156,7 +156,7 @@ async function customerStart() {
             self_door_close();
         }, 1000 * 40);
         setTimeout(function () {
-            await deliveryService.finish(currentId);
+            deliveryService.finish(currentId);
             destination_start();
         }, 1000 * 60);
     }
