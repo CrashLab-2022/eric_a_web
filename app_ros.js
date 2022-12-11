@@ -1,3 +1,5 @@
+#!/usr/bin/env node
+
 var createError = require('http-errors');
 var express = require('express');
 var path = require('path');
@@ -8,7 +10,7 @@ var dotenv = require('dotenv');
 let deliveryService = require('./services/deliveryService');
 
 const rosnodejs = require('rosnodejs');
-rosnodejs.initNode('/hongdo_ros_web_node');
+rosnodejs.initNode('/eric_a_ros_web_node');
 const nh = rosnodejs.nh;
 
 function opnecv_capture() {

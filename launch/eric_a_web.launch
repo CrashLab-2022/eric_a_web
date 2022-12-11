@@ -1,0 +1,3 @@
+<launch>
+      <node pkg="eric_a_web" type="app_ros.js" name="eric_a_ros_web_node" output="screen"/>
+</launch>
