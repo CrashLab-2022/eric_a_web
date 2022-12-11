@@ -142,8 +142,8 @@ async function customerStart() {
                     self_door_close();
                 }, 1000 * 40);
 
-                setTimeout(function () {
-                    deliveryService.finish(currentId);
+                setTimeout(async function () {
+                    await deliveryService.finish(currentId);
                     destination_start();
                 }, 1000 * 60);
             }
@@ -156,8 +156,8 @@ async function customerStart() {
         setTimeout(function () {
             self_door_close();
         }, 1000 * 40);
-        setTimeout(function () {
-            deliveryService.finish(currentId);
+        setTimeout(async function () {
+            await deliveryService.finish(currentId);
             destination_start();
         }, 1000 * 60);
     }
@@ -184,7 +184,7 @@ app.get('/start', async function (req, res) {
         currentId = currentDelivery[0].id;
         console.log('start');
         destination_middle();
-        deliveryService.startDelivery(currentId);
+        await deliveryService.startDelivery(currentId);
         console.log(currentDelivery);
         res.send('start success');
     } catch (err) {
