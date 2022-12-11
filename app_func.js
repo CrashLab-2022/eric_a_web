@@ -171,4 +171,9 @@ setInterval(async function () {
     // currentId = currentDelivery[0].id;
 }, 1000);
 
+app.get('/test', async function (req, res) {
+    console.log('test');
+    res.send('test');
+});
+
 module.exports = app;
