@@ -133,8 +133,11 @@ let timeOut = true;
 async function customerStart() {
     await deliveryService.arrive(currentId);
     if (currentDelivery[0].isInPerson == '직접 수령하기') {
+        timeOut = true;
+        console.log('직접 수령 시도');
         setTimeout(function () {
-            if (timeout) {
+            if (timeOut) {
+                console.log('시간 초과, 두고 가기로 변경');
                 self_door_open();
                 setTimeout(function () {
                     itempush();
@@ -151,6 +154,7 @@ async function customerStart() {
             }
         }, 1000 * 60 * 3);
     } else {
+        console.log('두고 가기 시작');
         self_door_open();
         setTimeout(function () {
             itempush();
@@ -197,10 +201,9 @@ app.get('/start', async function (req, res) {
 
 let open = false;
 app.get('/open', async function (req, res) {
-    console.log('try open');
+    console.log('직접 수령하기 시작');
     try {
         console.log('open', open);
-        console.log(currentDelivery);
         if (!open) {
             open = true;
             res.send('open start');
@@ -243,16 +246,6 @@ app.get('/humandooropen', async function (req, res) {
 
 app.get('/selfdoorclose', async function (req, res) {
     self_door_close();
-});
-
-app.get('/selftest', async function (req, res) {
-    self_door_open();
-    setTimeout(function () {
-        itempush();
-    }, 1000 * 20);
-    setTimeout(function () {
-        self_door_close();
-    }, 1000 * 25);
 });
 
 app.get('/test', async function (req, res) {
