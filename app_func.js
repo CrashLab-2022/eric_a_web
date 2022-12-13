@@ -8,6 +8,16 @@ var dotenv = require('dotenv');
 let deliveryService = require('./services/deliveryService');
 const { time } = require('console');
 
+// const middle_arrive = nh.advertiseService(
+//     '/middle_arrive',
+//     'std_srvs/Trigger',
+//     (req, res) => {
+//         console.log('middle_arrive');
+//         middleStart();
+//         return true;
+//     }
+// );
+
 function self_door_open() {
     console.log('func: self_door_open');
 }
@@ -38,14 +48,7 @@ function destination_start() {
 }
 
 async function middleStart() {
-    human_door_open();
-    setTimeout(function () {
-        human_door_close();
-    }, 1000 * 20); // 20초 후 닫힘
-    await deliveryService.startCustomer(currentId);
-    setTimeout(function () {
-        destination_final();
-    }, 1000 * 40);
+    await deliveryService.arriveAdmin(currentId);
 }
 
 let timeOut = true;
@@ -56,6 +59,7 @@ async function customerStart() {
     if (true) {
         timeOut = true;
         console.log('직접 수령 시도');
+        console.log(currentId);
         setTimeout(function () {
             if (timeOut) {
                 console.log('timeout, 직접 수령 불가');
@@ -109,8 +113,9 @@ app.get('/index.html', (req, res) => {
     res.send('hello');
 });
 
-app.get('/start', async function (req, res) {
+app.get('/start/:id', async function (req, res) {
     try {
+        currentId = req.params.id;
         timeOut = true;
         currentDelivery = await deliveryService.findDelivery();
         console.log(currentDelivery);
@@ -193,6 +198,23 @@ app.get('/selftest', async function (req, res) {
 app.get('/test', async function (req, res) {
     console.log('test');
     res.send('test');
+});
+
+app.get('/adminopen', async function (req, res) {
+    human_door_open();
+    res.send(true);
+});
+
+app.get('/adminclose', async function (req, res) {
+    human_door_close();
+    res.send(true);
+});
+
+app.get('/adminstart/:id', async function (req, res) {
+    currentId = req.params.id;
+    await deliveryService.startCustomer(currentId);
+    destination_final();
+    res.send(true);
 });
 
 // setInterval(async function () {
