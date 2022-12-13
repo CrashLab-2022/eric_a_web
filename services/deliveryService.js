@@ -26,7 +26,7 @@ module.exports = {
         delivery
             .update(
                 {
-                    status: '접수 완료',
+                    status: '이동 중',
                 },
                 { where: { id: id } }
             )
