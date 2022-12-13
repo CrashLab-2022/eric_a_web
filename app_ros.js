@@ -53,6 +53,7 @@ const start_arrive = nh.advertiseService(
 function self_door_open() {
     //문 열어주세요. 성공적으로 열면 true 반환, 3초뒤에 item push해주세요
     const client = nh.serviceClient('/opendoor_2', 'std_srvs/Trigger');
+    console.log('func: self_door_close');
     client.call((resp) => {
         console.log('Self door open Service response ' + JSON.stringify(resp));
     });
@@ -60,6 +61,7 @@ function self_door_open() {
 function itempush() {
     //open에서 finish 받으면 실행 끝나면 true 반환, 5초 뒤에 self_door_close해주세요
     const client = nh.serviceClient('/exection', 'std_srvs/Trigger');
+    console.log('func: itempush');
     client.call((resp) => {
         console.log('itempush Service response ' + JSON.stringify(resp));
     });
@@ -67,6 +69,7 @@ function itempush() {
 function self_door_close() {
     //문 닫아주세요. 성공적으로 열면 true 반환
     const client = nh.serviceClient('/closedoor_2', 'std_srvs/Trigger');
+    console.log('func: self_door_open');
     client.call((resp) => {
         console.log('self door close Service response ' + JSON.stringify(resp));
     });
@@ -74,6 +77,7 @@ function self_door_close() {
 function human_door_open() {
     //문 열어주세요. 성공적으로 열면 true 반환,
     const client = nh.serviceClient('/opendoor_1', 'std_srvs/Trigger');
+    console.log('func: human_door_open');
     client.call((resp) => {
         console.log('Human door open Service response ' + JSON.stringify(resp));
     });
@@ -82,6 +86,7 @@ function human_door_open() {
 function human_door_close() {
     //문 닫아주세요. 성공적으로 열면 true 반환,
     const client = nh.serviceClient('/closedoor_1', 'std_srvs/Trigger');
+    console.log('func: human_door_close');
     client.call((resp) => {
         console.log(
             'human door close Service response ' + JSON.stringify(resp)
@@ -93,6 +98,7 @@ function destination_middle() {
     //목적지 start 처음, middle 경유지, final 끝
     // 경유지 출발
     const client = nh.serviceClient('/middle', 'std_srvs/Trigger');
+    console.log('func: destination_middle');
     client.call((resp) => {
         console.log('Destination Service response ' + JSON.stringify(resp));
     });
@@ -102,6 +108,7 @@ function destination_final() {
     //목적지 start 처음, middle 경유지, final 끝
     // 도착지 출발
     const client = nh.serviceClient('/final', 'std_srvs/Trigger');
+    console.log('func: destination_final');
     client.call((resp) => {
         console.log('Destination Service response ' + JSON.stringify(resp));
     });
@@ -111,6 +118,7 @@ function destination_start() {
     //목적지 start 처음, middle 경유지, final 끝
     // 출발지 출발
     const client = nh.serviceClient('/start', 'std_srvs/Trigger');
+    console.log('func: destination_start');
     client.call((resp) => {
         console.log('Destination Service response ' + JSON.stringify(resp));
     });
