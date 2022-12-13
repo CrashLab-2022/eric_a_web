@@ -3,7 +3,7 @@ const { delivery, user } = require('../models');
 module.exports = {
     findDelivery: async function () {
         const deliveryResult = await delivery.findOne({
-            where: { status: '출발 전' },
+            where: { isAccepted: '접수 완료' },
         });
         const result = [];
         result.push({
@@ -18,7 +18,7 @@ module.exports = {
             status: deliveryResult.dataValues.status,
             date: deliveryResult.dataValues.date,
             time: deliveryResult.dataValues.time,
-            open: deliveryResult.dataValues.openRequest,
+            isAccepted: deliveryResult.dataValues.isAccepted,
         });
         return result;
     },
@@ -37,11 +37,26 @@ module.exports = {
                 return false;
             });
     },
+    arriveAdmin: async function (id) {
+        delivery
+            .update(
+                {
+                    status: '접수지 도착',
+                },
+                { where: { id: id } }
+            )
+            .then(() => {
+                return true;
+            })
+            .catch((err) => {
+                return false;
+            });
+    },
     startCustomer: async function (id) {
         delivery
             .update(
                 {
-                    status: '배송 중',
+                    status: '배송 출발',
                 },
                 { where: { id: id } }
             )

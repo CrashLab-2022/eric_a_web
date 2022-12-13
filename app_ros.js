@@ -25,7 +25,7 @@ const middle_arrive = nh.advertiseService(
     'std_srvs/Trigger',
     (req, res) => {
         console.log('middle_arrive');
-        middleStart();
+        middleArrive();
         return true;
     }
 );
@@ -36,7 +36,7 @@ const final_arrive = nh.advertiseService(
     'std_srvs/Trigger',
     (req, res) => {
         console.log('final_arrive');
-        customerStart();
+        customerArrive();
         return true;
     }
 );
@@ -138,7 +138,7 @@ async function middleStart() {
 let timeOut = true;
 // 도착 신호 받으면 실행되는 함수
 
-async function customerStart() {
+async function customerArrive() {
     await deliveryService.arrive(currentId);
     if (currentDelivery[0].isInPerson == '직접 수령하기') {
         timeOut = true;
@@ -177,10 +177,6 @@ async function customerStart() {
     }
 }
 
-function test() {
-    console.log('This is test!');
-}
-
 var app = express();
 let currentId = 0;
 let currentDelivery = null;
@@ -190,8 +186,9 @@ app.get('/index.html', (req, res) => {
     res.send('hello');
 });
 
-app.get('/start', async function (req, res) {
+app.get('/start/:id', async function (req, res) {
     try {
+        currentId = req.params.id;
         timeOut = true;
         currentDelivery = await deliveryService.findDelivery();
         console.log(currentDelivery);
@@ -233,11 +230,30 @@ app.get('/open', async function (req, res) {
     }
 });
 
+app.get('/adminopen', async function (req, res) {
+    human_door_open();
+    res.send(true);
+});
+
+app.get('/adminclose', async function (req, res) {
+    human_door_close();
+    res.send(true);
+});
+
+app.get('/adminstart/:id', async function (req, res) {
+    currentId = req.params.id;
+    await deliveryService.startCustomer(currentId);
+    destination_final();
+    res.send(true);
+});
+
+app.get('/test', async function (req, res) {
+    console.log('test');
+    res.send('test');
+});
+
 app.get('/itempush', async function (req, res) {
-    let result = itempush();
-    console.log(req);
-    console.log(res);
-    res.sendStatus(200);
+    itempush();
 });
 
 app.get('/humandoorclose', async function (req, res) {
@@ -255,15 +271,5 @@ app.get('/humandooropen', async function (req, res) {
 app.get('/selfdoorclose', async function (req, res) {
     self_door_close();
 });
-
-app.get('/test', async function (req, res) {
-    console.log('test');
-    res.send('test');
-});
-
-// setInterval(async function () {
-//     // currentDelivery = await deliveryService.findDelivery();
-//     // currentId = currentDelivery[0].id;
-// }, 1000);
 
 module.exports = app;
