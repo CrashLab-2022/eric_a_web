@@ -124,7 +124,7 @@ function destination_start() {
     });
 }
 
-async function middleStart() {
+async function middleArrive() {
     human_door_open();
     setTimeout(function () {
         human_door_close();
