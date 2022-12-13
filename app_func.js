@@ -52,7 +52,7 @@ let timeOut = true;
 // 도착 신호 받으면 실행되는 함수
 
 async function customerStart() {
-    // await deliveryService.arrive(currentId);
+    await deliveryService.arrive(currentId);
     if (true) {
         timeOut = true;
         console.log('직접 수령 시도');
@@ -69,7 +69,7 @@ async function customerStart() {
                 }, 1000 * 4);
 
                 setTimeout(async function () {
-                    // await deliveryService.finish(currentId);
+                    await deliveryService.finish(currentId);
                     destination_start();
                 }, 1000 * 6);
             }
@@ -84,7 +84,7 @@ async function customerStart() {
             self_door_close();
         }, 1000 * 4);
         setTimeout(async function () {
-            // await deliveryService.finish(currentId);
+            await deliveryService.finish(currentId);
             destination_start();
         }, 1000 * 6);
     }
@@ -97,6 +97,7 @@ function test() {
 var app = express();
 let currentId = 0;
 let currentDelivery = null;
+let currentStatus = 0; // 0이면 대기 중, 1이면 사용 중
 
 app.get('/arrive', async function (req, res) {
     console.log('arrive start');
@@ -173,6 +174,10 @@ app.get('/humandooropen', async function (req, res) {
 
 app.get('/selfdoorclose', async function (req, res) {
     self_door_close();
+});
+
+app.get('/middlestart', async function (req, res) {
+    middleStart();
 });
 
 app.get('/selftest', async function (req, res) {
