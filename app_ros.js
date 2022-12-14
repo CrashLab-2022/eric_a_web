@@ -133,12 +133,13 @@ async function middleArrive() {
 let timeOut = true;
 // 도착 신호 받으면 실행되는 함수
 
-async function customerArrive() {
+async function finalArrive() {
     let id = await deliveryService.findDelivery('배송 출발');
     await deliveryService.changeStatus(id, '배송지 도착');
-    if (true) {
+    let isPerson = await deliveryService.findDeliveryPerson(id);
+    if (isPerson) {
         timeOut = true;
-        console.log('직접 수령 시도');
+        console.log('직접 수령인 경우');
         console.log(currentId);
         setTimeout(function () {
             if (timeOut) {
@@ -160,7 +161,7 @@ async function customerArrive() {
             }
         }, 1000 * 30);
     } else {
-        console.log('직접 수령 아님');
+        console.log('두고 가기인 경우');
         self_door_open();
         setTimeout(function () {
             itempush();
@@ -175,7 +176,6 @@ async function customerArrive() {
         }, 1000 * 6);
     }
 }
-
 var app = express();
 let currentId = 0;
 let currentDelivery = null;
@@ -200,29 +200,21 @@ app.get('/start/:id', async function (req, res) {
     }
 });
 
-let open = false;
 app.get('/useropen', async function (req, res) {
-    console.log('try open');
+    console.log('직접 수령 시도');
     try {
-        console.log('open', open);
-        console.log(currentDelivery);
-        if (!open) {
-            open = true;
-            res.send('open start');
-            timeOut = false;
-            human_door_open();
-            setTimeout(function () {
-                human_door_close();
-            }, 1000 * 2);
-            setTimeout(async function () {
-                let id = await deliveryService.findDelivery('배송지 도착');
-                await deliveryService.changeStatus(id, '배송 완료');
-                destination_start();
-                open = false;
-            }, 1000 * 4);
-        } else {
-            res.send('already open');
-        }
+        res.send('open start');
+        timeOut = false;
+        human_door_open();
+        setTimeout(function () {
+            human_door_close();
+        }, 1000 * 2);
+        setTimeout(async function () {
+            let id = await deliveryService.findDelivery('배송지 도착');
+            await deliveryService.changeStatus(id, '배송 완료');
+            destination_start();
+            open = false;
+        }, 1000 * 4);
     } catch (err) {
         console.log(err);
     }

@@ -2,12 +2,16 @@ const { delivery, user } = require('../models');
 
 module.exports = {
     findDelivery: async function (status) {
-        console.log(status);
         const deliveryResult = await delivery.findOne({
             where: { status: status },
         });
-        console.log();
         return deliveryResult.dataValues.id;
+    },
+    findDeliveryPerson: async function (id) {
+        const deliveryResult = await delivery.findOne({
+            where: { id: id },
+        });
+        return deliveryResult.dataValues.inPerson;
     },
     changeStatus: async function (id, status) {
         delivery
