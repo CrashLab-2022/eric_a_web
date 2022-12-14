@@ -242,4 +242,20 @@ app.get('/test', async function (req, res) {
     res.send('test');
 });
 
+app.get('/humandoorclose', async function (req, res) {
+    human_door_close();
+});
+
+app.get('/selfdooropen', async function (req, res) {
+    self_door_open();
+});
+
+app.get('/humandooropen', async function (req, res) {
+    human_door_open();
+});
+
+app.get('/selfdoorclose', async function (req, res) {
+    self_door_close();
+});
+
 module.exports = app;
