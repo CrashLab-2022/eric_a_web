@@ -147,33 +147,33 @@ async function finalArrive() {
                 self_door_open();
                 setTimeout(function () {
                     itempush();
-                }, 1000 * 3);
+                }, 1000 * 20);
 
                 setTimeout(function () {
                     self_door_close();
-                }, 1000 * 4);
+                }, 1000 * 35);
 
                 setTimeout(async function () {
                     let id = await deliveryService.findDelivery('배송지 도착');
                     await deliveryService.changeStatus(id, '배송 완료');
                     destination_start();
-                }, 1000 * 6);
+                }, 1000 * 55);
             }
-        }, 1000 * 30);
+        }, 1000 * 60 * 3);
     } else {
         console.log('두고 가기인 경우');
         self_door_open();
         setTimeout(function () {
             itempush();
-        }, 1000 * 2);
+        }, 1000 * 20);
         setTimeout(function () {
             self_door_close();
-        }, 1000 * 4);
+        }, 1000 * 35);
         setTimeout(async function () {
             let id = await deliveryService.findDelivery('배송지 도착');
             await deliveryService.changeStatus(id, '배송 완료');
             destination_start();
-        }, 1000 * 6);
+        }, 1000 * 55);
     }
 }
 var app = express();
@@ -208,13 +208,13 @@ app.get('/useropen', async function (req, res) {
         human_door_open();
         setTimeout(function () {
             human_door_close();
-        }, 1000 * 2);
+        }, 1000 * 40);
         setTimeout(async function () {
             let id = await deliveryService.findDelivery('배송지 도착');
             await deliveryService.changeStatus(id, '배송 완료');
             destination_start();
             open = false;
-        }, 1000 * 4);
+        }, 1000 * 60);
     } catch (err) {
         console.log(err);
     }
