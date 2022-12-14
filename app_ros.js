@@ -262,4 +262,15 @@ app.get('/itempush', async function (req, res) {
     itempush();
 });
 
+app.get('/function1', async function (req, res) {
+    self_door_open();
+    setTimeout(function () {
+        itempush();
+    }, 1000 * 20);
+
+    setTimeout(function () {
+        self_door_close();
+    }, 1000 * 35);
+});
+
 module.exports = app;
