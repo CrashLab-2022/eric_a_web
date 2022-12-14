@@ -125,55 +125,54 @@ function destination_start() {
 }
 
 async function middleArrive() {
-    human_door_open();
-    setTimeout(function () {
-        human_door_close();
-    }, 1000 * 20); // 20초 후 닫힘
-    await deliveryService.startCustomer(currentId);
-    setTimeout(function () {
-        destination_final();
-    }, 1000 * 40);
+    let id = await deliveryService.findDelivery('접수지로 출발');
+    console.log('currentId', id);
+    await deliveryService.changeStatus(id, '접수지 도착');
 }
 
 let timeOut = true;
 // 도착 신호 받으면 실행되는 함수
 
 async function customerArrive() {
-    await deliveryService.arrive(currentId);
-    if (currentDelivery[0].isInPerson == '직접 수령하기') {
+    let id = await deliveryService.findDelivery('배송 출발');
+    await deliveryService.changeStatus(id, '배송지 도착');
+    if (true) {
         timeOut = true;
         console.log('직접 수령 시도');
+        console.log(currentId);
         setTimeout(function () {
             if (timeOut) {
-                console.log('시간 초과, 두고 가기로 변경');
+                console.log('timeout, 직접 수령 불가');
                 self_door_open();
                 setTimeout(function () {
                     itempush();
-                }, 1000 * 20);
+                }, 1000 * 3);
 
                 setTimeout(function () {
                     self_door_close();
-                }, 1000 * 40);
+                }, 1000 * 4);
 
                 setTimeout(async function () {
-                    await deliveryService.finish(currentId);
+                    let id = await deliveryService.findDelivery('배송지 도착');
+                    await deliveryService.changeStatus(id, '배송 완료');
                     destination_start();
-                }, 1000 * 60);
+                }, 1000 * 6);
             }
-        }, 1000 * 60 * 3);
+        }, 1000 * 30);
     } else {
-        console.log('두고 가기 시작');
+        console.log('직접 수령 아님');
         self_door_open();
         setTimeout(function () {
             itempush();
-        }, 1000 * 20);
+        }, 1000 * 2);
         setTimeout(function () {
             self_door_close();
-        }, 1000 * 40);
+        }, 1000 * 4);
         setTimeout(async function () {
-            await deliveryService.finish(currentId);
+            let id = await deliveryService.findDelivery('배송지 도착');
+            await deliveryService.changeStatus(id, '배송 완료');
             destination_start();
-        }, 1000 * 60);
+        }, 1000 * 6);
     }
 }
 
@@ -188,14 +187,11 @@ app.get('/index.html', (req, res) => {
 
 app.get('/start/:id', async function (req, res) {
     try {
-        currentId = req.params.id;
+        let id = req.params.id;
         timeOut = true;
-        currentDelivery = await deliveryService.findDelivery();
-        console.log(currentDelivery);
-        currentId = currentDelivery[0].id;
+        await deliveryService.changeStatus(id, '접수지로 출발');
         console.log('start');
         destination_middle();
-        await deliveryService.startDelivery(currentId);
         console.log(currentDelivery);
         res.send('start success');
     } catch (err) {
@@ -205,10 +201,11 @@ app.get('/start/:id', async function (req, res) {
 });
 
 let open = false;
-app.get('/open', async function (req, res) {
-    console.log('직접 수령하기 시작');
+app.get('/useropen', async function (req, res) {
+    console.log('try open');
     try {
         console.log('open', open);
+        console.log(currentDelivery);
         if (!open) {
             open = true;
             res.send('open start');
@@ -216,12 +213,13 @@ app.get('/open', async function (req, res) {
             human_door_open();
             setTimeout(function () {
                 human_door_close();
-            }, 1000 * 20);
+            }, 1000 * 2);
             setTimeout(async function () {
-                await deliveryService.finish(currentId);
+                let id = await deliveryService.findDelivery('배송지 도착');
+                await deliveryService.changeStatus(id, '배송 완료');
                 destination_start();
                 open = false;
-            }, 1000 * 40);
+            }, 1000 * 4);
         } else {
             res.send('already open');
         }
@@ -241,8 +239,8 @@ app.get('/adminclose', async function (req, res) {
 });
 
 app.get('/adminstart/:id', async function (req, res) {
-    currentId = req.params.id;
-    await deliveryService.startCustomer(currentId);
+    let id = req.params.id;
+    await deliveryService.changeStatus(id, '배송 출발');
     destination_final();
     res.send(true);
 });
@@ -250,26 +248,6 @@ app.get('/adminstart/:id', async function (req, res) {
 app.get('/test', async function (req, res) {
     console.log('test');
     res.send('test');
-});
-
-app.get('/itempush', async function (req, res) {
-    itempush();
-});
-
-app.get('/humandoorclose', async function (req, res) {
-    human_door_close();
-});
-
-app.get('/selfdooropen', async function (req, res) {
-    self_door_open();
-});
-
-app.get('/humandooropen', async function (req, res) {
-    human_door_open();
-});
-
-app.get('/selfdoorclose', async function (req, res) {
-    self_door_close();
 });
 
 module.exports = app;
