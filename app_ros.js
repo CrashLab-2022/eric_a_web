@@ -258,4 +258,8 @@ app.get('/selfdoorclose', async function (req, res) {
     self_door_close();
 });
 
+app.get('/itempush', async function (req, res) {
+    itempush();
+});
+
 module.exports = app;
