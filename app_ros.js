@@ -36,7 +36,7 @@ const final_arrive = nh.advertiseService(
     'std_srvs/Trigger',
     (req, res) => {
         console.log('final_arrive');
-        customerArrive();
+        finalArrive();
         return true;
     }
 );
@@ -267,7 +267,6 @@ app.get('/function1', async function (req, res) {
     setTimeout(function () {
         itempush();
     }, 1000 * 20);
-
     setTimeout(function () {
         self_door_close();
     }, 1000 * 35);
