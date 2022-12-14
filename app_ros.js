@@ -213,7 +213,6 @@ app.get('/useropen', async function (req, res) {
             let id = await deliveryService.findDelivery('배송지 도착');
             await deliveryService.changeStatus(id, '배송 완료');
             destination_start();
-            open = false;
         }, 1000 * 60);
     } catch (err) {
         console.log(err);
