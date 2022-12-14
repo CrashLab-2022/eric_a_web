@@ -1,32 +1,19 @@
 const { delivery, user } = require('../models');
 
 module.exports = {
-    findDelivery: async function () {
+    findDelivery: async function (status) {
+        console.log(status);
         const deliveryResult = await delivery.findOne({
-            where: { isAccepted: '접수 완료' },
+            where: { status: status },
         });
-        const result = [];
-        result.push({
-            id: deliveryResult.dataValues.id,
-            name: deliveryResult.dataValues.name,
-            phoneNumber: deliveryResult.dataValues.phoneNumber,
-            destination: deliveryResult.dataValues.destination,
-            isInPerson: deliveryResult.dataValues.inPerson
-                ? '직접 수령하기'
-                : '두고 가기',
-            item: deliveryResult.dataValues.item,
-            status: deliveryResult.dataValues.status,
-            date: deliveryResult.dataValues.date,
-            time: deliveryResult.dataValues.time,
-            isAccepted: deliveryResult.dataValues.isAccepted,
-        });
-        return result;
+        console.log();
+        return deliveryResult.dataValues.id;
     },
-    startDelivery: async function (id) {
+    changeStatus: async function (id, status) {
         delivery
             .update(
                 {
-                    status: '이동 중',
+                    status: status,
                 },
                 { where: { id: id } }
             )
