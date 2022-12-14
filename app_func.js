@@ -8,16 +8,6 @@ var dotenv = require('dotenv');
 let deliveryService = require('./services/deliveryService');
 const { time } = require('console');
 
-// const middle_arrive = nh.advertiseService(
-//     '/middle_arrive',
-//     'std_srvs/Trigger',
-//     (req, res) => {
-//         console.log('middle_arrive');
-//         middleStart();
-//         return true;
-//     }
-// );
-
 function self_door_open() {
     console.log('func: self_door_open');
 }
@@ -47,7 +37,7 @@ function destination_start() {
     console.log('destination_start');
 }
 
-async function middleStart() {
+async function middleArrive() {
     let id = await deliveryService.findDelivery('접수지로 출발');
     console.log('currentId', id);
     await deliveryService.changeStatus(id, '접수지 도착');
@@ -57,7 +47,7 @@ let timeOut = true;
 // 도착 신호 받으면 실행되는 함수
 
 async function finalArrive() {
-    let id = await deliveryService.findDelivery('배송지로 출발');
+    let id = await deliveryService.findDelivery('배송 출발');
     await deliveryService.changeStatus(id, '배송지 도착');
     if (true) {
         timeOut = true;
@@ -76,11 +66,12 @@ async function finalArrive() {
                 }, 1000 * 4);
 
                 setTimeout(async function () {
-                    await deliveryService.finish(id);
+                    let id = await deliveryService.findDelivery('배송지 도착');
+                    await deliveryService.changeStatus(id, '배송 완료');
                     destination_start();
                 }, 1000 * 6);
             }
-        }, 1000 * 10);
+        }, 1000 * 30);
     } else {
         console.log('직접 수령 아님');
         self_door_open();
@@ -91,7 +82,8 @@ async function finalArrive() {
             self_door_close();
         }, 1000 * 4);
         setTimeout(async function () {
-            await deliveryService.finish(id);
+            let id = await deliveryService.findDelivery('배송지 도착');
+            await deliveryService.changeStatus(id, '배송 완료');
             destination_start();
         }, 1000 * 6);
     }
@@ -105,6 +97,13 @@ var app = express();
 let currentId = 0;
 let currentDelivery = null;
 let currentStatus = 0; // 0이면 대기 중, 1이면 사용 중
+
+const corsOptions = {
+    origin: '*',
+    credentials: true,
+};
+
+app.use(cors(corsOptions));
 
 app.get('/arrive', async function (req, res) {
     console.log('arrive start');
@@ -120,9 +119,6 @@ app.get('/start/:id', async function (req, res) {
     try {
         let id = req.params.id;
         timeOut = true;
-        // currentDelivery = await deliveryService.findDelivery();
-        // console.log(currentDelivery);
-        // currentId = currentDelivery[0].id;
         await deliveryService.changeStatus(id, '접수지로 출발');
         console.log('start');
         destination_middle();
@@ -135,7 +131,7 @@ app.get('/start/:id', async function (req, res) {
 });
 
 let open = false;
-app.get('/open', async function (req, res) {
+app.get('/useropen', async function (req, res) {
     console.log('try open');
     try {
         console.log('open', open);
@@ -149,7 +145,8 @@ app.get('/open', async function (req, res) {
                 human_door_close();
             }, 1000 * 2);
             setTimeout(async function () {
-                // await deliveryService.finish(currentId);
+                let id = await deliveryService.findDelivery('배송지 도착');
+                await deliveryService.changeStatus(id, '배송 완료');
                 destination_start();
                 open = false;
             }, 1000 * 4);
@@ -161,42 +158,9 @@ app.get('/open', async function (req, res) {
     }
 });
 
-app.get('/itempush', async function (req, res) {
-    let result = itempush();
-    console.log(req);
-    console.log(res);
-    res.sendStatus(200);
-});
-
-app.get('/humandoorclose', async function (req, res) {
-    human_door_close();
-});
-
-app.get('/selfdooropen', async function (req, res) {
-    self_door_open();
-});
-
-app.get('/humandooropen', async function (req, res) {
-    human_door_open();
-});
-
-app.get('/selfdoorclose', async function (req, res) {
-    self_door_close();
-});
-
-app.get('/middlestart', async function (req, res) {
+app.get('/middleArrive', async function (req, res) {
     console.log('middlestart');
-    middleStart();
-});
-
-app.get('/selftest', async function (req, res) {
-    self_door_open();
-    setTimeout(function () {
-        itempush();
-    }, 1000 * 20);
-    setTimeout(function () {
-        self_door_close();
-    }, 1000 * 25);
+    middleArrive();
 });
 
 app.get('/test', async function (req, res) {
@@ -215,8 +179,8 @@ app.get('/adminclose', async function (req, res) {
 });
 
 app.get('/adminstart/:id', async function (req, res) {
-    currentId = req.params.id;
-    await deliveryService.changeStatus(id, '배송지로 출발');
+    let id = req.params.id;
+    await deliveryService.changeStatus(id, '배송 출발');
     destination_final();
     res.send(true);
 });
